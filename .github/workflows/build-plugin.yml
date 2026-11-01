@@ -1,0 +1,37 @@
+name: Build LMauction plugin
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'LMauction/**'
+      - '.github/workflows/build-plugin.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build JAR
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+
+      - name: Build plugin
+        run: mvn --batch-mode --no-transfer-progress --file LMauction/pom.xml clean package
+
+      - name: Upload plugin JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: lmauction-jar
+          path: LMauction/target/lmauction-1.0.jar
+          if-no-files-found: error
+          retention-days: 14
