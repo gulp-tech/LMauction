@@ -146,11 +146,10 @@ public class AuctionGui {
 
     public static ItemStack createListingItem(AuctionItem listing, UUID viewerUUID) {
         /*
-         * Bedrock's bundle tooltip is controlled by the client and Geyser may
-         * hide all custom lore on a Material.BUNDLE item. The auction icon is
-         * therefore a plain chest for real Minecraft bundles. It is only a
-         * display proxy: the stored ItemStack and the bag given to a buyer are
-         * still the original bundle with all of its metadata and contents.
+         * The auction icon uses a fresh, empty bundle. Its contents are not
+         * copied into the GUI icon, so Geyser can display our custom lore and
+         * price. The stored ItemStack and the bag given to a buyer remain the
+         * original bundle with all of its metadata and contents.
          */
         ItemStack item = listing.isMinecraftBundle()
                 ? createMinecraftBundleListingIcon(listing)
@@ -192,7 +191,7 @@ public class AuctionGui {
     }
 
     private static ItemStack createMinecraftBundleListingIcon(AuctionItem listing) {
-        ItemStack icon = new ItemStack(Material.CHEST);
+        ItemStack icon = new ItemStack(Material.BUNDLE);
         ItemMeta iconMeta = icon.getItemMeta();
         if (iconMeta == null) {
             return icon;

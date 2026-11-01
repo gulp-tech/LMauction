@@ -69,8 +69,10 @@ public class Lmauction extends JavaPlugin implements CommandExecutor {
             getCommand("ah").setTabCompleter(new AuctionTabCompleter(itemTranslator));
         }
 
-        // Автосохранение раз в 1 минуту
-        Bukkit.getScheduler().runTaskTimerAsynchronously(this, this::saveAuctionData, 1200L, 1200L);
+        // Автосохранение раз в 1 минуту. Auction data and Bukkit ItemStacks
+        // must only be read on the server thread; asynchronous saves can write
+        // an old claim back after it has already been collected.
+        Bukkit.getScheduler().runTaskTimer(this, this::saveAuctionData, 1200L, 1200L);
 
         // Обработка просроченных лотов раз в 1 минуту
         Bukkit.getScheduler().runTaskTimer(this, this::processExpiredItems, 1200L, 1200L);
@@ -175,12 +177,19 @@ public class Lmauction extends JavaPlugin implements CommandExecutor {
                 return true;
             }
 
-            ItemStack toSell = mainHand.clone();
-            player.getInventory().setItemInMainHand(null);
+            // Remove the exact held stack from the server inventory before
+            // creating a listing. Explicit AIR plus an inventory resync is
+            // required for Geyser clients and prevents ghost/duplicate bags.
+            ItemStack toSell = takeMainHandItem(player);
+            if (toSell == null) {
+                player.sendMessage(hex("&cНе удалось забрать предмет из руки. Попробуйте ещё раз."));
+                return true;
+            }
 
             AuctionItem newListing = new AuctionItem(player.getUniqueId(), player.getName(), List.of(toSell), price, System.currentTimeMillis(), false);
             listings.add(newListing);
             saveAuctionData();
+            syncInventory(player);
 
             player.sendMessage(hex("&aПредмет &f" + getItemDisplayName(toSell) + " &aвыставлен за &6$" + formatPrice(price)));
             return true;
@@ -211,8 +220,8 @@ public class Lmauction extends JavaPlugin implements CommandExecutor {
                 ItemStack item = player.getInventory().getItem(slot);
                 if (item == null || item.getType().isAir()) continue;
 
-                ItemStack toSell = item.clone();
-                player.getInventory().setItem(slot, null);
+                ItemStack toSell = takeItemFromSlot(player, slot);
+                if (toSell == null) continue;
 
                 AuctionItem newListing = new AuctionItem(player.getUniqueId(), player.getName(), List.of(toSell), price, System.currentTimeMillis(), false);
                 listings.add(newListing);
@@ -222,6 +231,7 @@ public class Lmauction extends JavaPlugin implements CommandExecutor {
 
             if (sold > 0) {
                 saveAuctionData();
+                syncInventory(player);
                 player.sendMessage(hex("&aВыставлено предметов: &f" + sold + " &aпо &6$" + formatPrice(price) + " &aкаждый."));
             } else {
                 player.sendMessage(hex("&cНет доступных предметов в основном инвентаре (хотбар, броня и руки защищены)."));
@@ -320,29 +330,41 @@ public class Lmauction extends JavaPlugin implements CommandExecutor {
 
     public int claimAll(Player player) {
         UUID uuid = player.getUniqueId();
-        List<ItemStack> list = claims.get(uuid);
+        boolean changed = false;
 
-        // Обработка офлайн-продаж (зачисление денег за офлайн торги)
+        // Process offline earnings first and make their removal persistent even
+        // if the player has no item claims.
         if (offlineSales.containsKey(uuid)) {
             double amount = offlineSales.remove(uuid);
             econ.depositPlayer(player, amount);
             player.sendMessage(hex("&aВам зачислено &6$" + formatPrice(amount) + " &aза продажи в офлайне!"));
+            changed = true;
         }
 
-        if (list == null || list.isEmpty()) return 0;
+        /*
+         * Detach the complete claim list before adding anything to the player
+         * inventory. The empty state is saved first, so reconnects, Geyser
+         * inventory refreshes, and server restarts cannot issue the same bag a
+         * second time.
+         */
+        List<ItemStack> claimedItems = claims.remove(uuid);
+        if (claimedItems != null && !claimedItems.isEmpty()) {
+            changed = true;
+        }
 
-        int count = 0;
-        Iterator<ItemStack> it = list.iterator();
-        while (it.hasNext()) {
-            ItemStack item = it.next();
+        if (changed) {
+            saveAuctionData();
+        }
+
+        if (claimedItems == null || claimedItems.isEmpty()) {
+            return 0;
+        }
+
+        for (ItemStack item : claimedItems) {
             AntiBackpackProtector.protect(player, item);
-            it.remove();
-            count++;
         }
-
-        if (list.isEmpty()) claims.remove(uuid);
-        saveAuctionData();
-        return count;
+        syncInventory(player);
+        return claimedItems.size();
     }
 
     public void registerOfflineSale(UUID uuid, double amount) {
@@ -613,6 +635,40 @@ public class Lmauction extends JavaPlugin implements CommandExecutor {
             matcher = java.util.regex.Pattern.compile("&#[a-fA-F0-9]{6}").matcher(text);
         }
         return org.bukkit.ChatColor.translateAlternateColorCodes('&', text);
+    }
+
+    /**
+     * Takes an item from the actual hotbar slot instead of relying on a client
+     * hand update. This is important for Geyser inventory synchronization.
+     */
+    private ItemStack takeMainHandItem(Player player) {
+        return takeItemFromSlot(player, player.getInventory().getHeldItemSlot());
+    }
+
+    private ItemStack takeItemFromSlot(Player player, int slot) {
+        ItemStack current = player.getInventory().getItem(slot);
+        if (current == null || current.getType().isAir()) {
+            return null;
+        }
+
+        ItemStack taken = current.clone();
+        player.getInventory().setItem(slot, new ItemStack(Material.AIR));
+        return taken;
+    }
+
+    /**
+     * Forces an immediate and next-tick inventory refresh for Bedrock players.
+     */
+    private void syncInventory(Player player) {
+        if (!player.isOnline()) {
+            return;
+        }
+        player.updateInventory();
+        Bukkit.getScheduler().runTask(this, () -> {
+            if (player.isOnline()) {
+                player.updateInventory();
+            }
+        });
     }
 
     private String getItemDisplayName(ItemStack item) {
