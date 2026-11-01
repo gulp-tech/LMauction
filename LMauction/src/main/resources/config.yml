@@ -1,0 +1,433 @@
+limits:
+  rocket: 25
+  yt: 25
+  magister: 18
+  moon: 16
+  neo: 12
+  paladin: 10
+  moderator: 8
+  guardian: 8
+  helper: 7
+  meteor: 7
+  ml.helper: 6
+  star: 6
+  default: 5
+
+fake-players:
+  - "kakain52"
+  - "lolpop_0"
+  - "xDream_Night"
+  - "Pro100_Miner"
+  - "CraftMaster77"
+  - "DiamondHunter"
+  - "NetherKing_01"
+  - "SkyWalker_MC"
+  - "RedstoneGuru"
+  - "EnderSlayer99"
+  - "BlockBuilder_X"
+  - "PvPGod_228"
+  - "FarmLord_55"
+  - "MoonLight_MC"
+  - "StarCraft_01"
+  - "IronGolem_77"
+  - "GoldRush_MC"
+  - "LavaRunner_13"
+  - "IceBerg_99"
+  - "ThunderBolt_7"
+  - "ShadowFox_MC"
+  - "CrystalMage_1"
+  - "WolfPack_44"
+  - "DragonFire_X"
+  - "OceanDeep_22"
+  - "DesertStorm_8"
+  - "JungleKing_MC"
+  - "PixelArt_55"
+  - "RocketJump_01"
+  - "MagmaSlime_77"
+  - "FrostBite_MC"
+  - "SunRise_99"
+  - "DarkMatter_13"
+  - "LightSpeed_7"
+  - "CosmicDust_44"
+  - "NeonGlow_MC"
+  - "QuantumLeap_1"
+  - "TurboCharge_X"
+  - "VortexSpin_22"
+  - "ZenithPeak_88"
+  - "SharpPvP_01"
+  - "CrystalRush"
+  - "PearlThrower"
+  - "TrapKiller"
+  - "RaidHunter"
+  - "SpawnFarmer"
+  - "PotionDealer"
+  - "MobCrusher"
+  - "SkyPvP_Pro"
+  - "NetherLoot"
+  - "ShulkerKing"
+  - "GoldenHands"
+  - "SharpnessVI"
+  - "UltraRaider"
+  - "VoidWalker"
+  - "FarmMachine"
+  - "BossSlayer"
+  - "TradeMasterX"
+  - "QuickHands"
+  - "StackSeller"
+  - "LootGoblin"
+  - "NightFighter"
+  - "SilentArrow"
+  - "PearlMaster_77"
+  - "SpawnerShop"
+  - "UsefulItems"
+  - "PvPMarket"
+  - "RedZoneLoot"
+  - "NoMercy_1"
+  - "HardcoreTrade"
+  - "SharpDeal"
+  - "SupplyDrop"
+  - "MegaFarmer"
+  - "CombatReady"
+  - "RaiderStock"
+  - "BestPrices_MC"
+  - "FastTrade_01"
+  - "HunterElite"
+  - "CombatShop"
+  - "WarriorSale"
+  - "UtilityBox"
+  - "MobTradeX"
+  - "EndLootStore"
+
+fake-items:
+  - "ENDER_PEARL:4:16:1500:25000"
+  - "EXPERIENCE_BOTTLE:8:64:3000:60000"
+  - "GOLDEN_APPLE:2:16:5000:45000"
+  - "ENCHANTED_GOLDEN_APPLE:1:3:250000:1500000"
+  - "OBSIDIAN:16:64:1500:15000"
+  - "RESPAWN_ANCHOR:1:8:25000:180000"
+  - "GLOWSTONE:8:64:800:9000"
+  - "TNT:8:64:2500:40000"
+  - "GUNPOWDER:8:64:1000:15000"
+  - "BLAZE_ROD:4:32:1500:18000"
+  - "GHAST_TEAR:2:16:3000:35000"
+  - "PHANTOM_MEMBRANE:2:16:2500:22000"
+  - "SLIME_BALL:4:32:1500:18000"
+  - "MAGMA_CREAM:4:32:1800:20000"
+  - "FERMENTED_SPIDER_EYE:4:32:500:5000"
+  - "SPIDER_EYE:8:64:300:4000"
+  - "GLISTERING_MELON_SLICE:4:32:900:7000"
+  - "NETHER_WART:8:64:1000:9000"
+  - "DRAGON_BREATH:2:16:5000:40000"
+  - "SCUTE:1:8:2500:18000"
+  - "NAUTILUS_SHELL:2:8:1800:16000"
+  - "SHULKER_SHELL:2:16:10000:90000"
+  - "SHULKER_BOX:1:4:30000:180000"
+  - "NAME_TAG:1:8:2500:18000"
+  - "SADDLE:1:4:4000:30000"
+  - "BEACON:1:1:120000:400000"
+  - "CONDUIT:1:1:100000:350000"
+  - "NETHER_STAR:1:1:100000:400000"
+  - "HEART_OF_THE_SEA:1:2:70000:250000"
+  - "ANCIENT_DEBRIS:1:16:15000:180000"
+  - "NETHERITE_SCRAP:1:12:12000:150000"
+  - "NETHERITE_INGOT:1:4:100000:600000"
+  - "DIAMOND:8:64:3000:50000"
+  - "EMERALD:8:64:3000:50000"
+  - "IRON_INGOT:16:64:100:5000"
+  - "GOLD_INGOT:8:64:300:9000"
+  - "LAPIS_LAZULI:8:64:200:4000"
+  - "REDSTONE:16:64:100:3000"
+  - "AMETHYST_SHARD:8:64:400:8000"
+  - "COAL:16:64:100:2000"
+  - "COOKED_BEEF:16:64:100:2500"
+  - "COOKED_PORKCHOP:16:64:100:2500"
+  - "COOKED_CHICKEN:16:64:100:2200"
+  - "GOLDEN_CARROT:8:64:700:10000"
+  - "BREAD:16:64:100:1000"
+  - "CARROT:16:64:100:1000"
+  - "POTATO:16:64:100:1000"
+  - "WHEAT:16:64:100:1000"
+  - "MELON_SLICE:16:64:100:1000"
+  - "SWEET_BERRIES:16:64:100:1000"
+  - "GLOW_BERRIES:16:64:100:1500"
+  - "TRIDENT:1:1:20000:90000"
+  - "ELYTRA:1:1:400000:1500000"
+  - "BOW:1:1:1500:12000"
+  - "CROSSBOW:1:1:2000:15000"
+  - "SHIELD:1:1:1000:7000"
+  - "SPYGLASS:1:1:500:4000"
+  - "FISHING_ROD:1:1:300:3000"
+  - "SHEARS:1:1:100:1000"
+
+  - "DIAMOND_SWORD:1:1:25000:100000"
+  - "DIAMOND_AXE:1:1:25000:95000"
+  - "DIAMOND_PICKAXE:1:1:25000:100000"
+
+  - "DIAMOND_HELMET:1:1:50000:160000"
+  - "DIAMOND_CHESTPLATE:1:1:70000:220000"
+  - "DIAMOND_LEGGINGS:1:1:60000:190000"
+  - "DIAMOND_BOOTS:1:1:50000:150000"
+
+  - "NETHERITE_SWORD:1:1:120000:500000"
+  - "NETHERITE_PICKAXE:1:1:140000:550000"
+
+  - "NETHERITE_HELMET:1:1:90000:350000"
+  - "NETHERITE_CHESTPLATE:1:1:130000:500000"
+  - "NETHERITE_LEGGINGS:1:1:110000:420000"
+  - "NETHERITE_BOOTS:1:1:90000:320000"
+
+  - "WITHER_SKELETON_SKULL:1:3:10000:80000"
+  - "DRAGON_HEAD:1:1:150000:600000"
+  - "CREEPER_HEAD:1:1:8000:70000"
+  - "ZOMBIE_HEAD:1:1:3000:30000"
+  - "MUSIC_DISC_PIGSTEP:1:1:70000:350000"
+  - "MUSIC_DISC_OTHERSIDE:1:1:50000:250000"
+  - "MUSIC_DISC_RELIC:1:1:40000:200000"
+
+  - "SPAWNER:1:2:600000:1500000"
+  - "VILLAGER_SPAWN_EGG:1:2:700000:1500000"
+  - "CREEPER_SPAWN_EGG:1:2:350000:1000000"
+  - "ENDERMAN_SPAWN_EGG:1:2:300000:900000"
+  - "BLAZE_SPAWN_EGG:1:2:300000:900000"
+  - "SLIME_SPAWN_EGG:1:2:220000:700000"
+  - "GHAST_SPAWN_EGG:1:2:350000:1000000"
+  - "ZOMBIE_SPAWN_EGG:1:2:180000:600000"
+  - "SKELETON_SPAWN_EGG:1:2:180000:600000"
+  - "SPIDER_SPAWN_EGG:1:2:160000:500000"
+  - "COW_SPAWN_EGG:1:2:50000:200000"
+  - "PIG_SPAWN_EGG:1:2:50000:200000"
+  - "SHEEP_SPAWN_EGG:1:2:50000:200000"
+
+  - "HOPPER:4:32:1000:15000"
+  - "OBSERVER:4:32:1000:12000"
+  - "STICKY_PISTON:4:32:800:10000"
+  - "PISTON:4:32:700:8000"
+  - "DISPENSER:4:32:800:10000"
+  - "DROPPER:4:32:600:7000"
+  - "REDSTONE_LAMP:4:32:800:8000"
+  - "TARGET:4:32:700:7000"
+  - "SCULK_SENSOR:1:16:5000:45000"
+
+  - "BOOKSHELF:8:64:500:7000"
+  - "OAK_LOG:16:64:100:1000"
+  - "SPRUCE_LOG:16:64:100:1000"
+  - "CHERRY_LOG:16:64:100:1200"
+  - "MANGROVE_LOG:16:64:100:1200"
+  - "BAMBOO_BLOCK:16:64:100:1200"
+  - "QUARTZ_BLOCK:8:64:300:4000"
+  - "SEA_LANTERN:8:64:600:7000"
+  - "SHROOMLIGHT:8:64:700:8000"
+  - "OCHRE_FROGLIGHT:8:64:1000:10000"
+  - "BLACKSTONE:16:64:100:1500"
+  - "PRISMARINE:8:64:200:2500"
+  - "END_STONE:8:64:100:1500"
+  - "CALCITE:8:64:100:1200"
+  - "LANTERN:8:64:300:3000"
+  - "CAMPFIRE:4:16:200:2000"
+  - "SLIME_BLOCK:4:16:1200:10000"
+  - "HONEY_BLOCK:4:16:1200:10000"
+
+fake-lmpridmet-items:
+  ethereal-dust:
+    min-price: 30000
+    max-price: 120000
+    chance: 0.010
+    min-count: 1
+    max-count: 4
+
+  deserter-shard:
+    min-price: 40000
+    max-price: 150000
+    chance: 0.008
+    min-count: 1
+    max-count: 3
+
+  enchanted-composter:
+    min-price: 180000
+    max-price: 600000
+    chance: 0.003
+    min-count: 1
+    max-count: 1
+
+  fire-tornado:
+    min-price: 45000
+    max-price: 180000
+    chance: 0.008
+    min-count: 1
+    max-count: 3
+
+  lava-walker:
+    min-price: 250000
+    max-price: 900000
+    chance: 0.002
+    min-count: 1
+    max-count: 1
+
+  explosive-dynamite:
+    min-price: 25000
+    max-price: 90000
+    chance: 0.012
+    min-count: 1
+    max-count: 6
+
+  random-spawner:
+    min-price: 900000
+    max-price: 2500000
+    chance: 0.0015
+    min-count: 1
+    max-count: 1
+
+  mystery-egg:
+    min-price: 150000
+    max-price: 700000
+    chance: 0.003
+    min-count: 1
+    max-count: 2
+
+  trap-cube:
+    min-price: 70000
+    max-price: 250000
+    chance: 0.006
+    min-count: 1
+    max-count: 3
+
+  acid-bubble:
+    min-price: 30000
+    max-price: 120000
+    chance: 0.008
+    min-count: 1
+    max-count: 4
+
+  cleansing-tear:
+    min-price: 50000
+    max-price: 160000
+    chance: 0.007
+    min-count: 1
+    max-count: 4
+
+  spawner-breaker:
+    min-price: 350000
+    max-price: 1200000
+    chance: 0.002
+    min-count: 1
+    max-count: 1
+
+  titan-blade:
+    min-price: 800000
+    max-price: 2200000
+    chance: 0.0015
+    min-count: 1
+    max-count: 1
+
+  frost-sword:
+    min-price: 700000
+    max-price: 1800000
+    chance: 0.0015
+    min-count: 1
+    max-count: 1
+
+  life-blossom:
+    min-price: 60000
+    max-price: 220000
+    chance: 0.006
+    min-count: 1
+    max-count: 4
+
+  lightning-staff:
+    min-price: 250000
+    max-price: 900000
+    chance: 0.002
+    min-count: 1
+    max-count: 1
+
+  storm-blade:
+    min-price: 300000
+    max-price: 1100000
+    chance: 0.002
+    min-count: 1
+    max-count: 1
+
+  shadow-bow:
+    min-price: 280000
+    max-price: 950000
+    chance: 0.002
+    min-count: 1
+    max-count: 1
+
+  life-amulet:
+    min-price: 200000
+    max-price: 800000
+    chance: 0.002
+    min-count: 1
+    max-count: 1
+
+  fake-lmpotions-items:
+    berserk:
+      min-price: 90000
+      max-price: 260000
+      chance: 0.004
+      min-count: 1
+      max-count: 2
+
+    raider:
+      min-price: 70000
+      max-price: 220000
+      chance: 0.005
+      min-count: 1
+      max-count: 2
+
+    guardian:
+      min-price: 120000
+      max-price: 350000
+      chance: 0.003
+      min-count: 1
+      max-count: 1
+
+    escape:
+      min-price: 140000
+      max-price: 420000
+      chance: 0.0025
+      min-count: 1
+      max-count: 1
+
+    hunter:
+      min-price: 80000
+      max-price: 240000
+      chance: 0.004
+      min-count: 1
+      max-count: 2
+
+    toxic:
+      min-price: 150000
+      max-price: 500000
+      chance: 0.002
+      min-count: 1
+      max-count: 1
+
+    void:
+      min-price: 180000
+      max-price: 650000
+      chance: 0.0018
+      min-count: 1
+      max-count: 1
+
+    royal:
+      min-price: 600000
+      max-price: 1800000
+      chance: 0.001
+      min-count: 1
+      max-count: 1
+
+    healing:
+      min-price: 60000
+      max-price: 180000
+      chance: 0.004
+      min-count: 1
+      max-count: 2
+
+    fury:
+      min-price: 200000
+      max-price: 700000
+      chance: 0.0018
+      min-count: 1
+      max-count: 1

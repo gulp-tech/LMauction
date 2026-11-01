@@ -1,0 +1,70 @@
+# ▶ используется везде
+prefix: "&#FFD700▶"
+
+# Ошибки (красный градиент)
+no-permission: "&#FF4444▶ &#AA0000У вас нет прав."
+player-only: "&#FF4444▶ &#AA0000Команда только для игроков."
+invalid-number: "&#FF4444▶ &#AA0000Цена должна быть числом."
+price-too-low: "&#FF4444▶ &#AA0000Цена должна быть больше 0."
+price-below-min: "&#FFD700▶ &#FF8C00Минимальная цена для &#FFFF00%material%&#FF8C00: &#FFFFFF%min%"
+price-above-max: "&#FFD700▶ &#FF8C00Максимальная цена для &#FFFF00%material%&#FF8C00: &#FFFFFF%max%"
+item-in-hand-required: "&#FF4444▶ &#AA0000Возьмите предмет в руку."
+no-space: "&#FF4444▶ &#AA0000В инвентаре нет места."
+lot-not-found: "&#FF4444▶ &#AA0000Этот лот уже купили."
+not-owner: "&#FF4444▶ &#AA0000Вы не владелец лота."
+not-enough-money: "&#FF4444▶ &#AA0000Недостаточно денег. Нужно: &#FFFF00%price%"
+no-items-in-sellinv: "&#FF4444▶ &#AA0000Положите хотя бы 1 предмет."
+
+# Успех (зелёный градиент)
+lot-created-simple: "&#00FF00▶ &#7FFF00Предмет выставлен за &#FFFF00%price% &#FFD700⛃"
+lot-bought-buyer: "&#00FF00▶ &#7FFF00Вы купили лот &#FFFFFF#%id% &#7FFF00за &#FFFF00%price% &#FFD700⛃"
+lot-bought-seller: "&#00FF00▶ &#00D9FF%buyer% &#7FFF00купил ваш лот &#FFFFFF#%id% &#7FFF00за &#FFFF00%price% &#FFD700⛃"
+expired-take: "&#00FF00▶ &#7FFF00Вы забрали лот &#FFFFFF#%id%&#7FFF00."
+mylots-take: "&#00FF00▶ &#7FFF00Вы сняли лот с аукциона."
+reload-done: "&#00FF00▶ &#7FFF00Конфиг перезагружен."
+
+# Информация (голубой градиент)
+expired-moved: "&#00D9FF▶ &#0066FFВаш лот &#FFFFFF#%id% &#0066FFистёк."
+offline-earnings: "&#FFD700▶ &#FF8C00У вас купили предметов на &#00FF00%amount% &#FFD700⛃"
+take-in-my-lots: "&#00D9FF▶ &#0066FFЗабрать можно в разделе &#7FFF00«Ваши лоты»&#0066FF."
+
+# Лимиты (оранжевый)
+limit-reached-single: "&#FFD700▶ &#FF8C00Лимит обычных лотов: &#FFFFFF%limit%"
+limit-reached-inventory: "&#FFD700▶ &#FF8C00Лимит наборов: &#FFFFFF%limit%"
+
+# Использование команд
+sell-usage: "&#FFD700▶ &#FF8C00Использование: &#FFFFFF/ah sell <цена>"
+search-usage: "&#FFD700▶ &#FF8C00Использование: &#FFFFFF/ah search <название>"
+history-usage: "&#FFD700▶ &#FF8C00Использование: &#FFFFFF/ah history <ник>"
+
+# История (фиолетовый градиент для заголовка)
+history-header: "&#9D00FF▶ &#FF00E5История игрока &#FFFFFF%player%"
+history-line: "&#FFFF00#%index% &#8B8B8B│ &#FFFFFF%type% &#8B8B8B│ &#AAAAAAЛот #%lotId% &#8B8B8B│ &#00FF00%price% &#FFD700⛃"
+history-seller: "  &#8B8B8B├─ &#AAAAAAПродавец: &#FFFFFF%seller%"
+history-buyer: "  &#8B8B8B└─ &#AAAAAAПокупатель: &#FFFFFF%buyer%"
+history-empty: "&#FF8C00▶ &#FFD700История пуста."
+
+# GUI (радужные заголовки)
+gui:
+  main-title: "&#FF0000✦ &#FF7F00А&#FFFF00у&#00FF00к&#0000FFц&#4B0082и&#9400D3о&#FF0000н &#FF7F00✦"
+  my-title: "&#00D9FF✦ &#0066FFВаши лоты &#00D9FF✦"
+  expired-title: "&#FF4444✦ &#AA0000Истекшие &#FF4444✦"
+  search-title: "&#FFD700✦ &#FF8C00Поиск &#FFD700✦"
+  categories-title: "&#9D00FF✦ &#FF00E5Категории &#9D00FF✦"
+
+  buttons:
+    prev: "&#FFFF00◀ Назад"
+    next: "&#FFFF00Вперёд ▶"
+    refresh: "&#00FF00⟳ Обновить"
+    my-items: "&#00D9FF✦ Ваши лоты"
+    expired: "&#FF4444⌛ Истекшие"
+    categories: "&#FFD700✦ Категории"
+
+  lore:
+    lot-id: "&#FFD700ID: &#FFFFFF%id%"
+    lot-price: "&#FFD700Цена: &#00FF00%price% &#FFD700⛃"
+    lot-expires: "&#FF8C00Истекает: &#FFFFFF%time%"
+    lot-seller: "&#00D9FFПродавец: &#FFFFFF%seller%"
+    click-buy: "&#00FF00● &#7FFF00ЛКМ - купить"
+    click-remove: "&#FF4444● &#AA0000ПКМ - снять"
+    click-take-expired: "&#FFD700● &#FF8C00ПКМ - забрать"

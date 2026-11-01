@@ -1,0 +1,80 @@
+name: Lmauction
+version: 1.0.0
+main: com.lmduel.lmauction.Lmauction
+api-version: '1.20'
+description: Auction house plugin with LMpridmet integration
+
+softdepend:
+  - Vault
+  - LMpridmet
+
+commands:
+  ah:
+    description: Auction house
+    usage: /ah
+    aliases: [auction, auc]
+
+permissions:
+  lmauction.use:
+    description: Использование аукциона
+    default: true
+
+  lmauction.sell:
+    description: Продажа предметов на аукционе
+    default: true
+
+  lmauction.admin:
+    description: Админ-команды аукциона
+    default: op
+
+  lmauction.limit.default:
+    description: Лимит 5 слотов
+    default: true
+
+  lmauction.limit.star:
+    description: Лимит 6 слотов
+    default: false
+
+  lmauction.limit.ml.helper:
+    description: Лимит 6 слотов
+    default: false
+
+  lmauction.limit.helper:
+    description: Лимит 7 слотов
+    default: false
+
+  lmauction.limit.meteor:
+    description: Лимит 7 слотов
+    default: false
+
+  lmauction.limit.guardian:
+    description: Лимит 8 слотов
+    default: false
+
+  lmauction.limit.moderator:
+    description: Лимит 8 слотов
+    default: false
+
+  lmauction.limit.paladin:
+    description: Лимит 10 слотов
+    default: false
+
+  lmauction.limit.neo:
+    description: Лимит 12 слотов
+    default: false
+
+  lmauction.limit.moon:
+    description: Лимит 16 слотов
+    default: false
+
+  lmauction.limit.magister:
+    description: Лимит 18 слотов
+    default: false
+
+  lmauction.limit.yt:
+    description: Лимит 25 слотов
+    default: false
+
+  lmauction.limit.rocket:
+    description: Лимит 25 слотов
+    default: false
