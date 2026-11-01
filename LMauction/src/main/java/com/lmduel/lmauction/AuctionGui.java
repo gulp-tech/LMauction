@@ -152,7 +152,7 @@ public class AuctionGui {
          * original bundle with all of its metadata and contents.
          */
         ItemStack item = listing.isMinecraftBundle()
-                ? createMinecraftBundleListingIcon(listing)
+                ? createMinecraftBundleListingIcon(listing, viewerUUID)
                 : listing.getDisplayItem().clone();
         ItemMeta meta = item.getItemMeta();
 
@@ -190,20 +190,44 @@ public class AuctionGui {
         return item;
     }
 
-    private static ItemStack createMinecraftBundleListingIcon(AuctionItem listing) {
+    private static ItemStack createMinecraftBundleListingIcon(AuctionItem listing, UUID viewerUUID) {
         ItemStack icon = new ItemStack(Material.BUNDLE);
         ItemMeta iconMeta = icon.getItemMeta();
         if (iconMeta == null) {
             return icon;
         }
 
+        /*
+         * Bedrock reliably displays a custom item name but certain Geyser
+         * versions suppress BundleMeta lore. Put the same auction information
+         * in the multi-line name as a compatibility fallback. Geyser supports
+         * line breaks in a custom name, while Java players still receive the
+         * ordinary lore created above.
+         */
+        List<String> titleLines = new ArrayList<>();
         ItemStack original = listing.getContent().get(0);
         ItemMeta originalMeta = original.getItemMeta();
         if (originalMeta != null && originalMeta.hasDisplayName()) {
-            iconMeta.setDisplayName(originalMeta.getDisplayName());
+            titleLines.add(originalMeta.getDisplayName());
         } else {
-            iconMeta.setDisplayName(Lmauction.hex("&#D5A45CМешок с предметами"));
+            titleLines.add(Lmauction.hex("&#D5A45CМешок с предметами"));
         }
+        if (originalMeta != null && originalMeta.hasLore()) {
+            titleLines.addAll(originalMeta.getLore());
+        }
+
+        titleLines.add("");
+        titleLines.add(Lmauction.hex("&fЦена: &#7ACF87" + Lmauction.formatPrice(listing.getPrice())));
+        titleLines.add(Lmauction.hex("&fПродавец: &#0DA070" + listing.getSellerName()));
+        titleLines.add(Lmauction.hex("&fИстекает через " + listing.getTimeLeft() + " ч."));
+        titleLines.add("");
+        if (listing.getSeller().equals(viewerUUID)) {
+            titleLines.add(Lmauction.hex("&#B1687DНажмите - снять лот"));
+        } else {
+            titleLines.add(Lmauction.hex("&#3390A2Нажмите - посмотреть содержимое и купить"));
+        }
+
+        iconMeta.setDisplayName(String.join("\n", titleLines));
         icon.setItemMeta(iconMeta);
         return icon;
     }
