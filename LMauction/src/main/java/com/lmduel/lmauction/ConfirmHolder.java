@@ -2,7 +2,6 @@ package com.lmduel.lmauction;
 
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
@@ -19,7 +18,7 @@ public class ConfirmHolder implements InventoryHolder {
     }
 
     @Override
-    public @NotNull Inventory getInventory() {
+    public Inventory getInventory() {
         return null;
     }
 }

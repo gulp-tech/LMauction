@@ -51,7 +51,7 @@ public class LMpotionsHook {
                                 "&#55FF55Регенерация I &7(0:45)"
                         ),
                         List.of(
-                                new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 20 * 90, 1, false, true, true),
+                                new PotionEffect(PotionEffectType.STRENGTH, 20 * 90, 1, false, true, true),
                                 new PotionEffect(PotionEffectType.REGENERATION, 20 * 45, 0, false, true, true)
                         ),
                         Color.fromRGB(190, 40, 40)
@@ -81,7 +81,7 @@ public class LMpotionsHook {
                                 "&#55FF55Регенерация II &7(0:25)"
                         ),
                         List.of(
-                                new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 20 * 60, 0, false, true, true),
+                                new PotionEffect(PotionEffectType.RESISTANCE, 20 * 60, 0, false, true, true),
                                 new PotionEffect(PotionEffectType.REGENERATION, 20 * 25, 1, false, true, true)
                         ),
                         Color.fromRGB(60, 200, 220)
@@ -112,7 +112,7 @@ public class LMpotionsHook {
                         ),
                         List.of(
                                 new PotionEffect(PotionEffectType.SPEED, 20 * 60, 1, false, true, true),
-                                new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 20 * 60, 0, false, true, true)
+                                new PotionEffect(PotionEffectType.STRENGTH, 20 * 60, 0, false, true, true)
                         ),
                         Color.fromRGB(60, 200, 60)
                 );
@@ -159,7 +159,7 @@ public class LMpotionsHook {
                                 "&#FFAA00Огнестойкость I &7(2:00)"
                         ),
                         List.of(
-                                new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 20 * 35, 2, false, true, true),
+                                new PotionEffect(PotionEffectType.STRENGTH, 20 * 35, 2, false, true, true),
                                 new PotionEffect(PotionEffectType.REGENERATION, 20 * 20, 1, false, true, true),
                                 new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 20 * 120, 0, false, true, true)
                         ),
@@ -175,7 +175,7 @@ public class LMpotionsHook {
                                 "&#55FF55Регенерация I &7(0:15)"
                         ),
                         List.of(
-                                new PotionEffect(PotionEffectType.HEAL, 1, 1, false, true, true),
+                                new PotionEffect(PotionEffectType.INSTANT_HEALTH, 1, 1, false, true, true),
                                 new PotionEffect(PotionEffectType.REGENERATION, 20 * 15, 0, false, true, true)
                         ),
                         Color.fromRGB(255, 110, 160)
@@ -190,7 +190,7 @@ public class LMpotionsHook {
                                 "&#55FFFFСкорость I &7(0:25)"
                         ),
                         List.of(
-                                new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 20 * 25, 2, false, true, true),
+                                new PotionEffect(PotionEffectType.STRENGTH, 20 * 25, 2, false, true, true),
                                 new PotionEffect(PotionEffectType.SPEED, 20 * 25, 0, false, true, true)
                         ),
                         Color.fromRGB(220, 40, 20)

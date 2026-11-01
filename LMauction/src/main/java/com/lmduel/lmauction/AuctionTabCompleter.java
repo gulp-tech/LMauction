@@ -3,8 +3,6 @@ package com.lmduel.lmauction;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +17,7 @@ public class AuctionTabCompleter implements TabCompleter {
     }
 
     @Override
-    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (args.length == 1) {
             List<String> subs = new ArrayList<>(List.of("menu", "search", "searsh", "sell", "sellinv", "claim", "view", "help"));
             if (sender.hasPermission("lmauction.admin")) {
