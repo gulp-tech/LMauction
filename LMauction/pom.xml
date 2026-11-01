@@ -17,10 +17,10 @@
     </properties>
 
     <repositories>
-        <!-- Purpurbedrock/Purpur API for the production server (26.2) -->
+        <!-- Paper API is the compatibility API implemented by Purpurbedrock -->
         <repository>
-            <id>purpur</id>
-            <url>https://repo.purpurmc.org/snapshots</url>
+            <id>papermc</id>
+            <url>https://repo.papermc.io/repository/maven-public/</url>
         </repository>
         <!-- Репозиторий JitPack (для Vault) -->
         <repository>
@@ -30,11 +30,11 @@
     </repositories>
 
     <dependencies>
-        <!-- Purpurbedrock server API 26.2 (includes Paper, Spigot, Bukkit APIs) -->
+        <!-- Paper API 26.2, implemented by the Purpurbedrock production server -->
         <dependency>
-            <groupId>org.purpurmc.purpur</groupId>
-            <artifactId>purpur-api</artifactId>
-            <version>[26.2.build,26.3)</version>
+            <groupId>io.papermc.paper</groupId>
+            <artifactId>paper-api</artifactId>
+            <version>26.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <!-- Vault API (исправляет ошибку Cannot resolve symbol 'milkbowl') -->
