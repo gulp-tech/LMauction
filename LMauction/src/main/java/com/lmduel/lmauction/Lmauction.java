@@ -1,7 +1,5 @@
 package com.lmduel.lmauction;
 
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -637,15 +635,6 @@ public class Lmauction extends JavaPlugin implements CommandExecutor {
             matcher = java.util.regex.Pattern.compile("&#[a-fA-F0-9]{6}").matcher(text);
         }
         return org.bukkit.ChatColor.translateAlternateColorCodes('&', text);
-    }
-
-    /**
-     * Converts the plugin's legacy/hex colour strings to the component API
-     * used by Purpurbedrock 26.2. Components preserve custom names and lore
-     * through the modern item-data protocol used by Geyser.
-     */
-    public static Component component(String text) {
-        return LegacyComponentSerializer.legacySection().deserialize(hex(text));
     }
 
     /**

@@ -182,10 +182,7 @@ public class AuctionGui {
                 lore.add(Lmauction.hex("&#4B9189Количество выбирается в следующем меню"));
             }
 
-            // Use Paper's component API on modern Purpurbedrock. The legacy
-            // setLore bridge is not reliably passed through for bundle items
-            // in the Bedrock item protocol.
-            meta.lore(lore.stream().map(Lmauction::component).toList());
+            meta.setLore(lore);
             item.setItemMeta(meta);
         }
 
@@ -230,7 +227,7 @@ public class AuctionGui {
             titleLines.add(Lmauction.hex("&#3390A2Нажмите - посмотреть содержимое и купить"));
         }
 
-        iconMeta.displayName(Lmauction.component(String.join("\n", titleLines)));
+        iconMeta.setDisplayName(String.join("\n", titleLines));
         icon.setItemMeta(iconMeta);
         return icon;
     }

@@ -1,7 +1,7 @@
 name: Lmauction
 version: 1.0.0
 main: com.lmduel.lmauction.Lmauction
-api-version: '26.2'
+api-version: '1.20'
 description: Auction house plugin with LMpridmet integration
 
 softdepend:
