@@ -5,7 +5,6 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -146,27 +145,19 @@ public class AuctionGui {
     }
 
     public static ItemStack createListingItem(AuctionItem listing, UUID viewerUUID) {
-        ItemStack item = listing.getDisplayItem().clone();
+        /*
+         * Bedrock's bundle tooltip is controlled by the client and Geyser may
+         * hide all custom lore on a Material.BUNDLE item. The auction icon is
+         * therefore a plain chest for real Minecraft bundles. It is only a
+         * display proxy: the stored ItemStack and the bag given to a buyer are
+         * still the original bundle with all of its metadata and contents.
+         */
+        ItemStack item = listing.isMinecraftBundle()
+                ? createMinecraftBundleListingIcon(listing)
+                : listing.getDisplayItem().clone();
         ItemMeta meta = item.getItemMeta();
 
         if (meta != null) {
-            /*
-             * Never clear BundleMeta here. This stack is only a GUI icon, but
-             * Geyser clients can lose the bundle tooltip and even its click
-             * target when its contents are rewritten. Hiding the additional
-             * vanilla tooltip keeps the stored bag untouched while leaving
-             * room for the auction price and seller lore below.
-             */
-            if (listing.isMinecraftBundle()) {
-                try {
-                    // Added in newer Paper APIs. valueOf keeps the plugin
-                    // compatible with every configured 1.20 server build.
-                    meta.addItemFlags(ItemFlag.valueOf("HIDE_ADDITIONAL_TOOLTIP"));
-                } catch (IllegalArgumentException ignored) {
-                    // Older APIs simply show the normal bundle tooltip.
-                }
-            }
-
             List<String> lore = new ArrayList<>();
             // Если у предмета уже был лор (например, описание от LMpridmet), сохраняем его
             if (listing.getDisplayItem().hasItemMeta() && listing.getDisplayItem().getItemMeta().hasLore()) {
@@ -198,6 +189,24 @@ public class AuctionGui {
 
         Lmauction.setPDC(item, listingKey(), listing.getId().toString());
         return item;
+    }
+
+    private static ItemStack createMinecraftBundleListingIcon(AuctionItem listing) {
+        ItemStack icon = new ItemStack(Material.CHEST);
+        ItemMeta iconMeta = icon.getItemMeta();
+        if (iconMeta == null) {
+            return icon;
+        }
+
+        ItemStack original = listing.getContent().get(0);
+        ItemMeta originalMeta = original.getItemMeta();
+        if (originalMeta != null && originalMeta.hasDisplayName()) {
+            iconMeta.setDisplayName(originalMeta.getDisplayName());
+        } else {
+            iconMeta.setDisplayName(Lmauction.hex("&#D5A45CМешок с предметами"));
+        }
+        icon.setItemMeta(iconMeta);
+        return icon;
     }
 
     private void renderBottomPanel(Inventory inv, AHHolder holder) {
