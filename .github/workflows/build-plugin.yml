@@ -19,12 +19,32 @@ jobs:
       - name: Check out source
         uses: actions/checkout@v4
 
-      - name: Set up Java 17
-        uses: actions/setup-java@v4
+      - name: Set up Java 25
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
-          java-version: '17'
+          java-version: '25'
           cache: maven
+
+      - name: Install the exact Purpurbedrock 26.2 API
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/purpurbedrock-api
+          gh release download v26.2.0-bedrock \
+            --repo gulp-tech/Purpurbedrock \
+            --pattern purpurbedrock-26.2.jar \
+            --dir /tmp/purpurbedrock-api
+          cd /tmp/purpurbedrock-api
+          echo "af28303f60bced739700aec31d960e733e328a05c94b53319d2173a62a5f238d  purpurbedrock-26.2.jar" | sha256sum --check --strict
+          mvn --batch-mode --no-transfer-progress org.apache.maven.plugins:maven-install-plugin:3.1.2:install-file \
+            -Dfile=purpurbedrock-26.2.jar \
+            -DgroupId=tech.gulp.purpurbedrock \
+            -DartifactId=purpurbedrock-api \
+            -Dversion=26.2 \
+            -Dpackaging=jar \
+            -DgeneratePom=true
 
       - name: Build plugin
         shell: bash

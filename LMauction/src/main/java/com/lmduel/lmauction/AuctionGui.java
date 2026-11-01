@@ -182,7 +182,9 @@ public class AuctionGui {
                 lore.add(Lmauction.hex("&#4B9189Количество выбирается в следующем меню"));
             }
 
-            meta.setLore(lore);
+            // Modern Purpurbedrock sends item descriptions as data-component
+            // lore. This is required for the Geyser Bedrock item translator.
+            meta.lore(lore.stream().map(Lmauction::component).toList());
             item.setItemMeta(meta);
         }
 
@@ -227,7 +229,7 @@ public class AuctionGui {
             titleLines.add(Lmauction.hex("&#3390A2Нажмите - посмотреть содержимое и купить"));
         }
 
-        iconMeta.setDisplayName(String.join("\n", titleLines));
+        iconMeta.displayName(Lmauction.component(String.join("\n", titleLines)));
         icon.setItemMeta(iconMeta);
         return icon;
     }
