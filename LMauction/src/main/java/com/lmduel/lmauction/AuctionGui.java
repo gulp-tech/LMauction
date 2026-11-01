@@ -7,8 +7,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.BlockStateMeta;
-import org.bukkit.inventory.meta.BundleMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.*;
@@ -152,16 +150,21 @@ public class AuctionGui {
         ItemMeta meta = item.getItemMeta();
 
         if (meta != null) {
-            // КЛЮЧЕВОЕ ИСПРАВЛЕНИЕ ДЛЯ МЕШОЧКОВ:
-            // Если это мешочек, очищаем его содержимое в иконке GUI,
-            // чтобы ванильный лор клиента не перекрывал нашу цену.
-            if (meta instanceof BundleMeta bundleMeta) {
-                bundleMeta.setItems(new ArrayList<>());
-            }
-
-            // Скрываем все ванильные флаги
-            for (ItemFlag flag : ItemFlag.values()) {
-                meta.addItemFlags(flag);
+            /*
+             * Never clear BundleMeta here. This stack is only a GUI icon, but
+             * Geyser clients can lose the bundle tooltip and even its click
+             * target when its contents are rewritten. Hiding the additional
+             * vanilla tooltip keeps the stored bag untouched while leaving
+             * room for the auction price and seller lore below.
+             */
+            if (listing.isMinecraftBundle()) {
+                try {
+                    // Added in newer Paper APIs. valueOf keeps the plugin
+                    // compatible with every configured 1.20 server build.
+                    meta.addItemFlags(ItemFlag.valueOf("HIDE_ADDITIONAL_TOOLTIP"));
+                } catch (IllegalArgumentException ignored) {
+                    // Older APIs simply show the normal bundle tooltip.
+                }
             }
 
             List<String> lore = new ArrayList<>();
@@ -181,12 +184,12 @@ public class AuctionGui {
             lore.add("");
 
             if (listing.getSeller().equals(viewerUUID)) {
-                lore.add(Lmauction.hex("&#B1687DЛКМ - снять лот"));
-            } else if (listing.isBundle()) {
-                lore.add(Lmauction.hex("&#3390A2ЛКМ - посмотреть набор"));
+                lore.add(Lmauction.hex("&#B1687DНажмите - снять лот"));
+            } else if (listing.isPreviewBundle()) {
+                lore.add(Lmauction.hex("&#3390A2Нажмите - посмотреть содержимое и купить"));
             } else {
-                lore.add(Lmauction.hex("&#3390A2ЛКМ - купить все &#4B9189(" + listing.getAmount() + " шт.)"));
-                lore.add(Lmauction.hex("&#3390A2ПКМ - купить одну штуку"));
+                lore.add(Lmauction.hex("&#3390A2Нажмите - открыть меню покупки"));
+                lore.add(Lmauction.hex("&#4B9189Количество выбирается в следующем меню"));
             }
 
             meta.setLore(lore);

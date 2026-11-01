@@ -2,6 +2,7 @@ package com.lmduel.lmauction;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BundleMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
@@ -41,11 +42,63 @@ public class AuctionItem {
     public long getTimestamp() { return timestamp; }
     public boolean isBundle() { return bundle; }
 
+    /**
+     * A real Minecraft bundle is stored as a single ItemStack whose contents
+     * live in its BundleMeta. It is different from this plugin's older
+     * multi-item "bundle" listing (the {@link #bundle} flag).
+     */
+    public boolean isMinecraftBundle() {
+        if (content.size() != 1) {
+            return false;
+        }
+
+        ItemStack item = content.get(0);
+        return item != null
+                && item.getType() == Material.BUNDLE
+                && item.getItemMeta() instanceof BundleMeta;
+    }
+
+    /**
+     * True when a lot needs a contents-preview screen before it can be bought.
+     */
+    public boolean isPreviewBundle() {
+        return bundle || isMinecraftBundle();
+    }
+
+    /**
+     * Returns safe copies of the items displayed in the contents-preview GUI.
+     * For a Minecraft bundle this reads its BundleMeta; for the legacy bundle
+     * listing it returns the items that make up the lot.
+     */
+    public List<ItemStack> getBundleContents() {
+        List<ItemStack> result = new ArrayList<>();
+
+        if (isMinecraftBundle()) {
+            BundleMeta meta = (BundleMeta) content.get(0).getItemMeta();
+            if (meta != null) {
+                for (ItemStack item : meta.getItems()) {
+                    if (item != null && !item.getType().isAir()) {
+                        result.add(item.clone());
+                    }
+                }
+            }
+            return result;
+        }
+
+        for (ItemStack item : content) {
+            if (item != null && !item.getType().isAir()) {
+                result.add(item.clone());
+            }
+        }
+        return result;
+    }
+
     public ItemStack getDisplayItem() {
-        if (content == null || content.isEmpty()) {
+        if (content.isEmpty()) {
             return new ItemStack(Material.BARRIER);
         }
-        // Если это "Набор" (несколько разных предметов)
+        // If this is a plugin-created set of several different items,
+        // represent it with a bundle icon in the auction list.
         if (bundle) {
             ItemStack b = new ItemStack(Material.BUNDLE);
             ItemMeta meta = b.getItemMeta();
@@ -55,7 +108,7 @@ public class AuctionItem {
             }
             return b;
         }
-        // Если это обычный лот
+        // Ordinary lot, including a real Minecraft bundle.
         return content.get(0).clone();
     }
 
@@ -67,7 +120,7 @@ public class AuctionItem {
             }
             return Math.max(1, total);
         }
-        if (content == null || content.isEmpty()) return 1;
+        if (content.isEmpty()) return 1;
         return Math.max(1, content.get(0).getAmount());
     }
 

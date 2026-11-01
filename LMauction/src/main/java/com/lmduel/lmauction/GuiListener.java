@@ -6,48 +6,62 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 public class GuiListener implements Listener {
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    /**
+     * Do not ignore an already-cancelled click. Inventory-protection plugins
+     * often cancel clicks on bundles; our menus must still process their own
+     * controls after cancelling the action again.
+     */
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onInventoryClick(InventoryClickEvent event) {
-        InventoryHolder holder = event.getInventory().getHolder();
-        if (holder == null) return;
+        InventoryHolder holder = event.getView().getTopInventory().getHolder();
+        if (!isAuctionInventory(holder)) return;
 
-        // Если это любое наше меню аукциона - отменяем любой клик по умолчанию
-        if (holder instanceof AHHolder || holder instanceof BuyAmountHolder ||
-                holder instanceof BundleHolder || holder instanceof SellInvHolder) {
+        // Every auction GUI is read-only. This also prevents moving a bundle
+        // out of a preview screen by a normal inventory click.
+        event.setCancelled(true);
 
-            event.setCancelled(true);
+        if (!(event.getWhoClicked() instanceof Player player)) return;
+        if (event.getClickedInventory() != event.getView().getTopInventory()) return;
 
-            if (!(event.getWhoClicked() instanceof Player player)) return;
-
-            // Обрабатываем клики ТОЛЬКО в верхнем инвентаре (меню)
-            if (event.getClickedInventory() == event.getView().getTopInventory()) {
-                int slot = event.getSlot();
-
-                if (holder instanceof AHHolder ah) {
-                    handleAuction(player, ah, slot, event.getClick());
-                } else if (holder instanceof BuyAmountHolder bah) {
-                    handleBuy(player, bah, slot, event.isShiftClick());
-                } else if (holder instanceof BundleHolder bh) {
-                    if (slot == 49) player.closeInventory();
-                } else if (holder instanceof SellInvHolder sih) {
-                    handleSellInv(player, sih, slot);
-                }
-            }
+        int slot = event.getSlot();
+        if (holder instanceof AHHolder ah) {
+            handleAuction(player, ah, slot, event.getClick());
+        } else if (holder instanceof BuyAmountHolder bah) {
+            handleBuy(player, bah, slot, event.isShiftClick());
+        } else if (holder instanceof BundleHolder bh) {
+            handleBundlePreview(player, bh, slot);
+        } else if (holder instanceof SellInvHolder sih) {
+            handleSellInv(player, sih, slot);
         }
     }
 
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onInventoryDrag(InventoryDragEvent event) {
+        InventoryHolder holder = event.getView().getTopInventory().getHolder();
+        if (isAuctionInventory(holder)) {
+            event.setCancelled(true);
+        }
+    }
+
+    private boolean isAuctionInventory(InventoryHolder holder) {
+        return holder instanceof AHHolder
+                || holder instanceof BuyAmountHolder
+                || holder instanceof BundleHolder
+                || holder instanceof SellInvHolder;
+    }
+
     private void handleAuction(Player player, AHHolder holder, int slot, org.bukkit.event.inventory.ClickType click) {
-        // Логика главного меню (уже была у вас, просто убедитесь, что она здесь)
         if (slot >= 0 && slot < 45) {
             ItemStack item = player.getOpenInventory().getTopInventory().getItem(slot);
             if (item == null || item.getType() == Material.AIR) return;
 
-            // Если заглушка "Лот недоступен"
+            // Заглушка "Лот недоступен"
             if (item.getType() == Material.BARRIER) {
                 new AuctionGui(player).update(holder);
                 return;
@@ -55,7 +69,14 @@ public class GuiListener implements Listener {
 
             String idStr = Lmauction.getPDC(item, AuctionGui.listingKey());
             if (idStr != null) {
-                AuctionItem ai = Lmauction.getInstance().findListing(java.util.UUID.fromString(idStr));
+                AuctionItem ai;
+                try {
+                    ai = Lmauction.getInstance().findListing(java.util.UUID.fromString(idStr));
+                } catch (IllegalArgumentException ignored) {
+                    new AuctionGui(player).update(holder);
+                    return;
+                }
+
                 if (ai == null) {
                     new AuctionGui(player).update(holder);
                     return;
@@ -64,20 +85,22 @@ public class GuiListener implements Listener {
                 if (ai.getSeller().equals(player.getUniqueId())) {
                     if (click.isLeftClick()) {
                         Lmauction.getInstance().getListings().remove(ai);
-                        Lmauction.getInstance().addClaimItem(player.getUniqueId(), ai.getContent().get(0));
+                        // A legacy multi-item set must be returned in full,
+                        // not only as its first ItemStack.
+                        for (ItemStack returned : ai.getContent()) {
+                            Lmauction.getInstance().addClaimItem(player.getUniqueId(), returned);
+                        }
                         player.sendMessage(Lmauction.hex("&aЛот снят и отправлен в 'Забрать'."));
                         new AuctionGui(player).update(holder);
                     }
+                } else if (ai.isPreviewBundle()) {
+                    // A tap on a real Minecraft bag always opens its contents
+                    // preview. No right-click is needed for Geyser players.
+                    new BuyAmountGui(player, ai).openBundlePreview();
+                } else if (click.isRightClick()) {
+                    new BuyAmountGui(player, ai).open(1);
                 } else {
-                    if (ai.isBundle()) {
-                        new BuyAmountGui(player, ai).openBundlePreview();
-                    } else {
-                        if (click.isRightClick()) {
-                            new BuyAmountGui(player, ai).open(1);
-                        } else {
-                            new BuyAmountGui(player, ai).open(ai.getAmount());
-                        }
-                    }
+                    new BuyAmountGui(player, ai).open(ai.getAmount());
                 }
                 return;
             }
@@ -137,6 +160,80 @@ public class GuiListener implements Listener {
             holder.setPage(holder.getPage() + 1);
             new AuctionGui(player).update(holder);
         }
+    }
+
+    private void handleBundlePreview(Player player, BundleHolder holder, int slot) {
+        AuctionItem listing = holder.getListing();
+
+        if (slot == 45) {
+            if (holder.getPage() > 1) {
+                new BuyAmountGui(player, listing).openBundlePreview(holder.getPage() - 1);
+            } else {
+                new AuctionGui(player).open();
+            }
+            return;
+        }
+
+        if (slot == 50) { // Купить весь мешок/набор
+            purchaseWholeBundle(player, listing);
+            return;
+        }
+
+        if (slot == 52) { // Больше товаров продавца
+            new AuctionGui(player).openCustom(listing.getSeller(), listing.getSellerName());
+            return;
+        }
+
+        if (slot == 53) { // Следующая страница содержимого
+            int maxPages = Math.max(1, (int) Math.ceil((double) listing.getBundleContents().size() / 45));
+            if (holder.getPage() < maxPages) {
+                new BuyAmountGui(player, listing).openBundlePreview(holder.getPage() + 1);
+            }
+        }
+    }
+
+    private void purchaseWholeBundle(Player player, AuctionItem listing) {
+        if (!Lmauction.getInstance().getListings().contains(listing)) {
+            player.sendMessage(Lmauction.hex("&cЭтот лот уже недоступен."));
+            player.closeInventory();
+            return;
+        }
+
+        if (listing.getSeller().equals(player.getUniqueId())) {
+            player.sendMessage(Lmauction.hex("&cНельзя купить собственный лот."));
+            return;
+        }
+
+        double totalPrice = listing.getPrice();
+        if (!Lmauction.getEconomy().has(player, totalPrice)) {
+            player.sendMessage(Lmauction.hex("&cНедостаточно средств!"));
+            return;
+        }
+
+        var withdrawal = Lmauction.getEconomy().withdrawPlayer(player, totalPrice);
+        if (!withdrawal.transactionSuccess()) {
+            player.sendMessage(Lmauction.hex("&cНе удалось списать средства. Попробуйте ещё раз."));
+            return;
+        }
+
+        // For a real Minecraft bundle this adds the original ItemStack, so
+        // its BundleMeta and all items inside it remain intact.
+        for (ItemStack prize : listing.getContent()) {
+            AntiBackpackProtector.protect(player, prize);
+        }
+        Lmauction.getInstance().getListings().remove(listing);
+
+        if (!Lmauction.getInstance().isFakeSeller(listing.getSeller())) {
+            var deposit = Lmauction.getEconomy().depositPlayer(
+                    org.bukkit.Bukkit.getOfflinePlayer(listing.getSeller()), totalPrice);
+            if (!deposit.transactionSuccess()) {
+                Lmauction.getInstance().registerOfflineSale(listing.getSeller(), totalPrice);
+            }
+        }
+
+        player.sendMessage(Lmauction.hex("&aВы успешно купили мешок за &6$" + Lmauction.formatPrice(totalPrice)));
+        Lmauction.getInstance().saveAuctionData();
+        player.closeInventory();
     }
 
     private void handleBuy(Player player, BuyAmountHolder holder, int slot, boolean shift) {
