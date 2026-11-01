@@ -31,15 +31,32 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          mkdir -p /tmp/purpurbedrock-api
+          runtime_dir=/tmp/purpurbedrock-runtime
+          mkdir -p "$runtime_dir"
           gh release download v26.2.0-bedrock \
             --repo gulp-tech/Purpurbedrock \
             --pattern purpurbedrock-26.2.jar \
-            --dir /tmp/purpurbedrock-api
-          cd /tmp/purpurbedrock-api
+            --dir "$runtime_dir"
+          cd "$runtime_dir"
           echo "af28303f60bced739700aec31d960e733e328a05c94b53319d2173a62a5f238d  purpurbedrock-26.2.jar" | sha256sum --check --strict
+
+          # The release is a Paperclip launcher. Start it briefly in an
+          # isolated directory to materialize the exact server/API libraries.
+          echo 'eula=true' > eula.txt
+          timeout 90s java -jar purpurbedrock-26.2.jar nogui || true
+
+          # Make a compile-only classpath from the exact extracted runtime
+          # libraries. It is never packaged into the plugin JAR.
+          mkdir -p compile-api
+          while IFS= read -r -d '' jar_file; do
+            unzip -qq -o "$jar_file" -d compile-api || true
+          done < <(find "$runtime_dir" -type f -name '*.jar' -print0)
+          find compile-api/META-INF -type f \( -name '*.SF' -o -name '*.RSA' -o -name '*.DSA' \) -delete || true
+          jar --create --file purpurbedrock-api-26.2.jar -C compile-api .
+          jar tf purpurbedrock-api-26.2.jar | grep -qx 'org/bukkit/persistence/PersistentDataContainer.class'
+
           mvn --batch-mode --no-transfer-progress org.apache.maven.plugins:maven-install-plugin:3.1.2:install-file \
-            -Dfile=purpurbedrock-26.2.jar \
+            -Dfile=purpurbedrock-api-26.2.jar \
             -DgroupId=tech.gulp.purpurbedrock \
             -DartifactId=purpurbedrock-api \
             -Dversion=26.2 \
