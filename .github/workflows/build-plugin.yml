@@ -27,7 +27,15 @@ jobs:
           cache: maven
 
       - name: Build plugin
-        run: mvn --batch-mode --no-transfer-progress --file LMauction/pom.xml clean package
+        shell: bash
+        run: |
+          set -o pipefail
+          log_file="$(mktemp)"
+          if ! mvn --batch-mode --no-transfer-progress --file LMauction/pom.xml clean package 2>&1 | tee "$log_file"; then
+            details="$(tail -n 50 "$log_file" | tr '\n' ' ' | sed 's/::/: :/g')"
+            echo "::error title=Maven build failed::$details"
+            exit 1
+          fi
 
       - name: Commit compiled JAR
         env:
