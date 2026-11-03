@@ -148,13 +148,13 @@ public class BuyAmountGui {
         inv.setItem(49, createButton(Material.BUNDLE, "&#7ACF87Содержимое " + typeName,
                 List.of("&#4B9189Предметы выше можно только просматривать")));
 
-        // 50 - the only purchase action
+        // 50 - never buys immediately; it opens a final price confirmation.
         inv.setItem(50, createButton(Material.LIME_CONCRETE,
-                "&#68B170Купить за &#7ACF87" + Lmauction.formatPrice(listing.getPrice()),
+                "&#68B170Продолжить: &#7ACF87$" + Lmauction.formatPrice(listing.getPrice()),
                 List.of(
                         "&fВы получите весь " + typeName + ".",
                         "",
-                        "&#3390A2Нажмите, чтобы купить"
+                        "&#F4C542Цена будет показана ещё раз перед списанием денег"
                 )));
 
         // 52 - seller's lots
@@ -169,6 +169,34 @@ public class BuyAmountGui {
         player.openInventory(inv);
     }
 
+    /**
+     * A separate final step prevents a Bedrock player from purchasing a bundle
+     * after only tapping its icon. The exact total is displayed in the title,
+     * on a gold item, and on the confirmation button.
+     */
+    public void openBundleConfirmation() {
+        ConfirmHolder holder = new ConfirmHolder(listing);
+        String title = "&8Подтвердить: $" + Lmauction.formatPrice(listing.getPrice());
+        Inventory inv = Bukkit.createInventory(holder, 27, Lmauction.hex(title));
+        holder.setInventory(inv);
+
+        inv.setItem(11, createButton(Material.RED_CONCRETE, "&cВернуться к содержимому",
+                List.of("&#3390A2Нажмите, чтобы отменить покупку")));
+        inv.setItem(13, createButton(Material.GOLD_BLOCK,
+                "&#F4C542Итоговая цена: &#7ACF87$" + Lmauction.formatPrice(listing.getPrice()),
+                List.of(
+                        "&fПродавец: &#0DA070" + listing.getSellerName(),
+                        "&fБудет куплен весь мешочек.",
+                        "",
+                        "&#B1687DПроверьте сумму перед подтверждением"
+                )));
+        inv.setItem(15, createButton(Material.LIME_CONCRETE,
+                "&#68B170Подтвердить покупку за &#7ACF87$" + Lmauction.formatPrice(listing.getPrice()),
+                List.of("&#3390A2Нажмите для списания средств")));
+
+        player.openInventory(inv);
+    }
+
     private ItemStack createSellerButton() {
         return createButton(Material.SPYGLASS,
                 "&#5CB169Б&#5CB069о&#5BB068л&#5BAF68ь&#5AAE68ш&#5AAD67е &#59AC67т&#59AB66о&#58AA66ва&#58A965р&#57A865о&#57A764в &#56A664и&#56A563г&#55A463ро&#54A362к&#54A262а",
@@ -179,8 +207,8 @@ public class BuyAmountGui {
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
-            meta.setDisplayName(Lmauction.hex(name));
-            meta.setLore(lore.stream().map(Lmauction::hex).toList());
+            meta.displayName(Lmauction.component(name));
+            meta.lore(lore.stream().map(Lmauction::component).toList());
             item.setItemMeta(meta);
         }
         return item;

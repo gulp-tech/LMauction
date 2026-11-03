@@ -12,6 +12,7 @@ import java.util.*;
 
 public class AuctionGui {
 
+    private static final int LISTINGS_PER_PAGE = 18;
     private final Player player;
 
     public static NamespacedKey listingKey() {
@@ -20,6 +21,10 @@ public class AuctionGui {
 
     public static NamespacedKey categoryKey() {
         return new NamespacedKey(Lmauction.getInstance(), "category_id");
+    }
+
+    public static NamespacedKey priceCardKey() {
+        return new NamespacedKey(Lmauction.getInstance(), "price_card");
     }
 
     public AuctionGui(Player player) {
@@ -90,18 +95,29 @@ public class AuctionGui {
             case EXPENSIVE -> items.sort(Comparator.comparingDouble(AuctionItem::getPrice).reversed());
         }
 
-        int pageSize = 45;
-        int maxPages = Math.max(1, (int) Math.ceil((double) items.size() / pageSize));
+        int maxPages = Math.max(1, (int) Math.ceil((double) items.size() / LISTINGS_PER_PAGE));
         if (holder.getPage() > maxPages) holder.setPage(maxPages);
         if (holder.getPage() < 1) holder.setPage(1);
 
-        int startIndex = (holder.getPage() - 1) * pageSize;
-        int endIndex = Math.min(startIndex + pageSize, items.size());
+        int startIndex = (holder.getPage() - 1) * LISTINGS_PER_PAGE;
+        int endIndex = Math.min(startIndex + LISTINGS_PER_PAGE, items.size());
 
+        /*
+         * Each lot has a separate price card directly below it. Bedrock can
+         * suppress tooltip lore for a Bundle item, but it reliably renders the
+         * text of a normal gold-ingot card. This makes the exact price visible
+         * before a buyer can enter the purchase flow.
+         */
         for (int i = startIndex; i < endIndex; i++) {
             AuctionItem listing = items.get(i);
-            int slot = i - startIndex;
-            inv.setItem(slot, createListingItem(listing, player.getUniqueId()));
+            int indexOnPage = i - startIndex;
+            int row = indexOnPage / 9;
+            int column = indexOnPage % 9;
+            int listingSlot = row * 18 + column;
+            int priceSlot = listingSlot + 9;
+
+            inv.setItem(listingSlot, createListingItem(listing, player.getUniqueId()));
+            inv.setItem(priceSlot, createListingPriceCard(listing, player.getUniqueId()));
         }
     }
 
@@ -190,6 +206,43 @@ public class AuctionGui {
 
         Lmauction.setPDC(item, listingKey(), listing.getId().toString());
         return item;
+    }
+
+    /**
+     * A normal item used as the permanent, Bedrock-visible price label below
+     * every auction icon. It has the same listing id so tapping it opens the
+     * safe preview, but it can never remove an owner's lot.
+     */
+    public static ItemStack createListingPriceCard(AuctionItem listing, UUID viewerUUID) {
+        ItemStack card = new ItemStack(Material.GOLD_INGOT);
+        ItemMeta meta = card.getItemMeta();
+        if (meta != null) {
+            meta.displayName(Lmauction.component("&#F4C542Цена: &#7ACF87$" + Lmauction.formatPrice(listing.getPrice())));
+
+            List<String> lore = new ArrayList<>();
+            if (listing.isMinecraftBundle()) {
+                lore.add("&#D5A45CМешочек с предметами");
+            }
+            ItemStack source = listing.getDisplayItem();
+            if (source.hasItemMeta() && source.getItemMeta().hasLore()) {
+                lore.addAll(source.getItemMeta().getLore());
+            }
+            lore.add("");
+            lore.add("&fПродавец: &#0DA070" + listing.getSellerName());
+            lore.add("&fИстекает через &#7ACF87" + listing.getTimeLeft() + " ч.");
+            lore.add("");
+            if (listing.getSeller().equals(viewerUUID)) {
+                lore.add("&#B1687DЭто ваш лот");
+            } else {
+                lore.add("&#3390A2Нажмите, чтобы проверить содержимое и цену");
+            }
+            meta.lore(lore.stream().map(Lmauction::component).toList());
+            card.setItemMeta(meta);
+        }
+
+        Lmauction.setPDC(card, listingKey(), listing.getId().toString());
+        Lmauction.setPDC(card, priceCardKey(), "true");
+        return card;
     }
 
     private static ItemStack createMinecraftBundleListingIcon(AuctionItem listing, UUID viewerUUID) {

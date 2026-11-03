@@ -3,22 +3,28 @@ package com.lmduel.lmauction;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
-import java.util.UUID;
-
+/**
+ * Holder for the final, explicit purchase confirmation of a bundle listing.
+ */
 public class ConfirmHolder implements InventoryHolder {
 
-    private final UUID listingId;
+    private Inventory inventory;
+    private final AuctionItem listing;
 
-    public ConfirmHolder(UUID listingId) {
-        this.listingId = listingId;
+    public ConfirmHolder(AuctionItem listing) {
+        this.listing = listing;
     }
 
-    public UUID getListingId() {
-        return listingId;
+    public void setInventory(Inventory inventory) {
+        this.inventory = inventory;
     }
 
     @Override
     public Inventory getInventory() {
-        return null;
+        return inventory;
+    }
+
+    public AuctionItem getListing() {
+        return listing;
     }
 }

@@ -36,6 +36,8 @@ public class GuiListener implements Listener {
             handleBuy(player, bah, slot, event.isShiftClick());
         } else if (holder instanceof BundleHolder bh) {
             handleBundlePreview(player, bh, slot);
+        } else if (holder instanceof ConfirmHolder ch) {
+            handleBundleConfirmation(player, ch, slot);
         } else if (holder instanceof SellInvHolder sih) {
             handleSellInv(player, sih, slot);
         }
@@ -53,6 +55,7 @@ public class GuiListener implements Listener {
         return holder instanceof AHHolder
                 || holder instanceof BuyAmountHolder
                 || holder instanceof BundleHolder
+                || holder instanceof ConfirmHolder
                 || holder instanceof SellInvHolder;
     }
 
@@ -82,8 +85,13 @@ public class GuiListener implements Listener {
                     return;
                 }
 
+                boolean isPriceCard = Lmauction.getPDC(item, AuctionGui.priceCardKey()) != null;
                 if (ai.getSeller().equals(player.getUniqueId())) {
-                    if (click.isLeftClick()) {
+                    // The gold price card is informational. It must never
+                    // remove a lot when an owner taps it on a mobile screen.
+                    if (isPriceCard) {
+                        player.sendMessage(Lmauction.hex("&eЦена вашего лота: &6$" + Lmauction.formatPrice(ai.getPrice())));
+                    } else if (click.isLeftClick()) {
                         Lmauction.getInstance().getListings().remove(ai);
                         // A legacy multi-item set must be returned in full,
                         // not only as its first ItemStack.
@@ -174,8 +182,8 @@ public class GuiListener implements Listener {
             return;
         }
 
-        if (slot == 50) { // Купить весь мешок/набор
-            purchaseWholeBundle(player, listing);
+        if (slot == 50) { // Перейти к окончательному подтверждению
+            new BuyAmountGui(player, listing).openBundleConfirmation();
             return;
         }
 
@@ -189,6 +197,17 @@ public class GuiListener implements Listener {
             if (holder.getPage() < maxPages) {
                 new BuyAmountGui(player, listing).openBundlePreview(holder.getPage() + 1);
             }
+        }
+    }
+
+    private void handleBundleConfirmation(Player player, ConfirmHolder holder, int slot) {
+        AuctionItem listing = holder.getListing();
+        if (slot == 11) {
+            new BuyAmountGui(player, listing).openBundlePreview();
+            return;
+        }
+        if (slot == 15) {
+            purchaseWholeBundle(player, listing);
         }
     }
 
