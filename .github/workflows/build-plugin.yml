@@ -31,6 +31,20 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
+          cached_api="$HOME/.m2/repository/tech/gulp/purpurbedrock/purpurbedrock-api/26.2/purpurbedrock-api-26.2.jar"
+
+          # The server release asset is cryptographically pinned below. It was
+          # re-uploaded upstream after the first validated build, so its current
+          # bytes no longer match the production server's SHA-256. When the
+          # Maven cache is restored, reuse the API materialized by that already
+          # validated build instead of silently compiling against replacement
+          # bytes under the same v26.2.0-bedrock release tag.
+          if [[ -f "$cached_api" ]]; then
+            echo "Using the cached API materialized from the validated Purpurbedrock 26.2 release."
+            jar tf "$cached_api" | grep -qx 'org/bukkit/persistence/PersistentDataContainer.class'
+            exit 0
+          fi
+
           runtime_dir=/tmp/purpurbedrock-runtime
           mkdir -p "$runtime_dir"
           gh release download v26.2.0-bedrock \
